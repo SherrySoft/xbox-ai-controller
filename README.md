@@ -113,36 +113,63 @@ node bin/cli.js login
 
 ## 🤖 AI Agent Integration (MCP Setup)
 
-### Antigravity CLI (`agy`)
-Add `xbox` to your global `mcp_config.json` (`~/.gemini/config/mcp_config.json`):
+### ⚡ 1-Click Auto Installer (Recommended)
 
+No need to manually find or edit JSON files! Simply run:
+
+```bash
+npx xbox-ai-controller install
+```
+
+The interactive installer will ask:
+1. Which AI Agent you want to configure (**Antigravity**, **Claude Desktop**, **Cursor**, **Windsurf**, or **All**).
+2. Which runner you prefer (**`npx`** zero-install or **local path**).
+
+It detects your operating system, locates your config file, and safely injects the MCP server entry automatically!
+
+---
+
+### Manual Configuration (Optional)
+
+If you prefer to configure manually, add the following to your agent's config file:
+
+#### Antigravity CLI (`agy`) — `~/.gemini/config/mcp_config.json`
 ```json
 {
   "mcpServers": {
     "xbox": {
-      "command": "node",
-      "args": [
-        "E:\\Development\\xbox-ai-controller\\src\\server.js"
-      ]
+      "command": "npx",
+      "args": ["-y", "xbox-ai-controller"]
     }
   }
 }
 ```
 
-### Claude Desktop
-Add to your Claude Desktop config (`claude_desktop_config.json`):
-
+#### Claude Desktop — `claude_desktop_config.json`
 ```json
 {
   "mcpServers": {
     "xbox": {
-      "command": "node",
-      "args": [
-        "E:\\Development\\xbox-ai-controller\\src\\server.js"
-      ]
+      "command": "npx",
+      "args": ["-y", "xbox-ai-controller"]
     }
   }
 }
+```
+
+#### Cursor — `~/.cursor/mcp.json`
+```json
+{
+  "mcpServers": {
+    "xbox": {
+      "command": "npx",
+      "args": ["-y", "xbox-ai-controller"]
+    }
+  }
+}
+```
+
+*(Note: You can also replace `"npx", ["-y", "xbox-ai-controller"]` with `"node", ["/path/to/xbox-ai-controller/src/server.js"]` if running from a local clone).*
 ```
 
 ---

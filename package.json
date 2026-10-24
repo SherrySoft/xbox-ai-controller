@@ -4,6 +4,7 @@
   "description": "Model Context Protocol (MCP) server & AI Agent controller for Xbox One and Xbox Series consoles. Control power, games, media, volume, and virtual gamepad navigation using natural language.",
   "main": "src/index.js",
   "bin": {
+    "xbox-ai-controller": "bin/cli.js",
     "xbox-ai": "bin/cli.js",
     "xbox-mcp": "bin/cli.js"
   },

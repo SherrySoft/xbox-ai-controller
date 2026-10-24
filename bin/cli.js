@@ -8,9 +8,19 @@ const { getDeviceList, fetchInstalledApps, launchByProductId, goHome, powerOffCl
 const { requestDeviceCode, pollForToken } = require("../src/auth");
 const { resolveAppOrGame, POPULAR_APPS } = require("../src/database");
 const { loadConfig, saveConfig } = require("../src/config");
+const { runInstallerInteractive } = require("../src/installer");
 
 const args = process.argv.slice(2);
-const command = (args[0] || "help").toLowerCase();
+let command = (args[0] || "").toLowerCase();
+
+// If spawned without args: run MCP server if piped (by AI Agent), or show help if in interactive terminal
+if (!command) {
+  if (!process.stdin.isTTY) {
+    command = "mcp";
+  } else {
+    command = "help";
+  }
+}
 
 async function main() {
   const cfg = loadConfig();
@@ -19,6 +29,13 @@ async function main() {
     case "server":
     case "mcp": {
       require("../src/server");
+      break;
+    }
+
+    case "install":
+    case "setup": {
+      const targetAgent = (args[1] || "").toLowerCase();
+      await runInstallerInteractive(targetAgent || null);
       break;
     }
 
@@ -215,6 +232,7 @@ Usage:
   xbox-ai <command> [options]
 
 Commands:
+  install [agent]           Interactive 1-click MCP setup for Antigravity, Claude, Cursor, Windsurf
   discover                  Scan Wi-Fi/LAN for Xbox One and Series consoles
   wake                      Send magic wake packet to power on console
   off                       Turn off console or enter standby
