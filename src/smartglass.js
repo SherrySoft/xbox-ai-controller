@@ -134,13 +134,13 @@ function powerOn(ip, liveDeviceId, tries = 5) {
           try { socket.close(); } catch (_) {}
           resolve({
             status: "success",
-            message: `Sent ${tries} wake packet(s) to ${ip} (Live ID: ${cleanId}). Console is waking up...`,
+            message: `Sent ${tries} instant wake packet(s) to ${ip} (Live ID: ${cleanId}). Console is waking up...`,
             target_ip: ip,
             live_device_id: cleanId,
           });
-        }, 300);
+        }, 50);
       }
-    }, 400);
+    }, 30);
   });
 }
 

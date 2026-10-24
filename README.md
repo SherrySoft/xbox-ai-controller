@@ -73,7 +73,7 @@ flowchart TD
 Clone and install dependencies:
 
 ```bash
-git clone https://github.com/humairanwer/xbox-ai-controller.git
+git clone https://github.com/SherrySoft/xbox-ai-controller.git
 cd xbox-ai-controller
 npm install
 ```

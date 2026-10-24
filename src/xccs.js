@@ -206,6 +206,27 @@ async function powerOffCloud(cfg = null, deviceId = null) {
   return { status: "success", action: "power_off", response: res.data };
 }
 
+/**
+ * Instant Wake Up console via Microsoft XCCS Cloud
+ */
+async function wakeCloud(cfg = null, deviceId = null) {
+  const activeCfg = cfg || loadConfig();
+  const targetId = deviceId || activeCfg.live_device_id;
+
+  const payload = {
+    destination: "Xbox",
+    type: "Power",
+    command: "WakeUp",
+    sessionId: crypto.randomUUID(),
+    sourceId: "com.microsoft.smartglass",
+    parameters: [],
+    linkedXboxId: targetId,
+  };
+
+  const res = await requestXccs("POST", "/commands", payload, activeCfg);
+  return { status: "success", action: "wake_up", method: "xccs_cloud", response: res.data };
+}
+
 module.exports = {
   requestXccs,
   getDeviceList,
@@ -213,4 +234,5 @@ module.exports = {
   launchByProductId,
   goHome,
   powerOffCloud,
+  wakeCloud,
 };

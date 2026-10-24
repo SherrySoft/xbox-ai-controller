@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/humairanwer/xbox-ai-controller.git"
+    "url": "https://github.com/SherrySoft/xbox-ai-controller.git"
   },
   "scripts": {
     "start": "node src/server.js",

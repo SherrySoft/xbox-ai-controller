@@ -6,7 +6,7 @@
 
 const { loadConfig, saveConfig } = require("./config");
 const { discover, powerOn, ping, sendButton, sendMedia, sendVolume, powerOffLocal, recordDvr } = require("./smartglass");
-const { getDeviceList, fetchInstalledApps, launchByProductId, goHome, powerOffCloud } = require("./xccs");
+const { getDeviceList, fetchInstalledApps, launchByProductId, goHome, powerOffCloud, wakeCloud } = require("./xccs");
 const { requestDeviceCode, pollForToken } = require("./auth");
 const { resolveAppOrGame } = require("./database");
 
@@ -175,13 +175,30 @@ async function handleToolCall(name, args = {}) {
   if (name === "xbox_power_on") {
     const targetIp = args.ip || cfg.ip;
     const targetId = args.live_device_id || cfg.live_device_id;
-    if (!targetIp || !targetId) {
+    if (!targetIp && !targetId) {
       return {
         status: "missing_configuration",
         message: "Target IP or Live Device ID is missing. Run 'xbox_discover' on your local network.",
       };
     }
-    return await powerOn(targetIp, targetId, args.tries || 5);
+
+    const tasks = [];
+    if (targetIp && targetId) {
+      tasks.push(powerOn(targetIp, targetId, args.tries || 6));
+    }
+    if (cfg.user_hash && cfg.xsts_token) {
+      tasks.push(wakeCloud(cfg, targetId).catch((err) => ({ error: err.message })));
+    }
+
+    const results = await Promise.allSettled(tasks);
+    return {
+      status: "success",
+      action: "power_on",
+      message: "Instant dual wake command dispatched (Local Fast-UDP + Microsoft XCCS Cloud).",
+      target_ip: targetIp,
+      live_device_id: targetId,
+      details: results.map((r) => r.value || r.reason),
+    };
   }
 
   if (name === "xbox_power_off") {

@@ -4,7 +4,7 @@
  */
 
 const { discover, powerOn, ping, sendButton, sendMedia, sendVolume, powerOffLocal, recordDvr } = require("../src/smartglass");
-const { getDeviceList, fetchInstalledApps, launchByProductId, goHome, powerOffCloud } = require("../src/xccs");
+const { getDeviceList, fetchInstalledApps, launchByProductId, goHome, powerOffCloud, wakeCloud } = require("../src/xccs");
 const { requestDeviceCode, pollForToken } = require("../src/auth");
 const { resolveAppOrGame, POPULAR_APPS } = require("../src/database");
 const { loadConfig, saveConfig } = require("../src/config");
@@ -48,13 +48,18 @@ async function main() {
     case "on": {
       const ip = args[1] || cfg.ip;
       const liveId = args[2] || cfg.live_device_id;
-      if (!ip || !liveId) {
+      if (!ip && !liveId) {
         console.error("❌ Target IP or Live Device ID missing. Run 'xbox-ai discover' first.");
         process.exit(1);
       }
-      console.log(`⚡ Sending wake packets to ${ip} (${liveId})...`);
-      const res = await powerOn(ip, liveId);
-      console.log(res.message || res);
+      console.log(`⚡ Sending instant dual wake (Fast-UDP + Microsoft XCCS Cloud) to ${ip || liveId}...`);
+      const tasks = [];
+      if (ip && liveId) tasks.push(powerOn(ip, liveId, 6));
+      if (cfg.user_hash && cfg.xsts_token) {
+        tasks.push(wakeCloud(cfg, liveId).catch((err) => ({ error: err.message })));
+      }
+      await Promise.allSettled(tasks);
+      console.log(`✅ Instant wake signal dispatched to ${ip} (${liveId}).`);
       break;
     }
 
