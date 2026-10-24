@@ -1,0 +1,44 @@
+{
+  "name": "xbox-ai-controller",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) server & AI Agent controller for Xbox One and Xbox Series consoles. Control power, games, media, volume, and virtual gamepad navigation using natural language.",
+  "main": "src/index.js",
+  "bin": {
+    "xbox-ai": "bin/cli.js",
+    "xbox-mcp": "bin/cli.js"
+  },
+  "keywords": [
+    "xbox",
+    "xbox-one",
+    "xbox-series",
+    "mcp",
+    "model-context-protocol",
+    "ai-agent",
+    "smartglass",
+    "xccs",
+    "antigravity",
+    "claude-desktop",
+    "cursor"
+  ],
+  "author": "Humair Anwer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/humairanwer/xbox-ai-controller.git"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "mcp": "node src/server.js",
+    "cli": "node bin/cli.js",
+    "discover": "node bin/cli.js discover",
+    "wake": "node bin/cli.js wake",
+    "off": "node bin/cli.js off",
+    "login": "node bin/cli.js login"
+  },
+  "dependencies": {
+    "xbox-smartglass-core-node": "^0.6.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

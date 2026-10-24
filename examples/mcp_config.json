@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "xbox": {
+      "command": "node",
+      "args": [
+        "E:\\Development\\xbox-ai-controller\\src\\server.js"
+      ]
+    }
+  }
+}
