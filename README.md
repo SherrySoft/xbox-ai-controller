@@ -118,8 +118,9 @@ node bin/cli.js login
 No need to manually find or edit JSON files! Simply run:
 
 ```bash
-npx xbox-ai-controller install
+npx github:SherrySoft/xbox-ai-controller install
 ```
+*(Or `npx xbox-ai-controller install` if installed via npm)*
 
 The interactive installer will ask:
 1. Which AI Agent you want to configure (**Antigravity**, **Claude Desktop**, **Cursor**, **Windsurf**, or **All**).
