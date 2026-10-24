@@ -21,8 +21,8 @@ function getXccsHeaders(cfg) {
   };
 }
 
-function requestXccs(method, path, data = null, cfg = null) {
-  const activeCfg = cfg || loadConfig();
+async function requestXccs(method, path, data = null, cfg = null, isRetry = false) {
+  let activeCfg = cfg || loadConfig();
   if (!activeCfg.user_hash || !activeCfg.xsts_token) {
     throw new Error("Xbox Live authentication required. Run 'xbox_login' or 'request_device_code' first.");
   }
@@ -45,7 +45,15 @@ function requestXccs(method, path, data = null, cfg = null) {
     }, (res) => {
       let resp = "";
       res.on("data", (chunk) => (resp += chunk));
-      res.on("end", () => {
+      res.on("end", async () => {
+        if (res.statusCode === 401 && !isRetry) {
+          try {
+            const { refreshXboxTokens } = require("./auth");
+            await refreshXboxTokens();
+            const retryRes = await requestXccs(method, path, data, null, true);
+            return resolve(retryRes);
+          } catch (_) {}
+        }
         try {
           resolve({ status: res.statusCode, data: JSON.parse(resp) });
         } catch (_) {

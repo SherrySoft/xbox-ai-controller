@@ -171,8 +171,34 @@ async function exchangeForXboxTokens(accessToken) {
   };
 }
 
+/**
+ * Automatically refresh tokens using saved refresh_token
+ */
+async function refreshXboxTokens() {
+  const tokenData = loadTokens();
+  if (!tokenData || !tokenData.refresh_token) {
+    throw new Error("No refresh token available. Re-authenticate with 'xbox_auth_device_code'.");
+  }
+
+  const postData = querystring.stringify({
+    client_id: XBOX_CLIENT_ID,
+    scope: XBOX_SCOPES,
+    grant_type: "refresh_token",
+    refresh_token: tokenData.refresh_token,
+  });
+
+  const oauthRes = await httpPost("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", postData);
+  if (!oauthRes.data || !oauthRes.data.access_token) {
+    throw new Error(`Token refresh failed: ${JSON.stringify(oauthRes.data || oauthRes.raw)}`);
+  }
+
+  saveTokens(oauthRes.data);
+  return await exchangeForXboxTokens(oauthRes.data.access_token);
+}
+
 module.exports = {
   requestDeviceCode,
   pollForToken,
   exchangeForXboxTokens,
+  refreshXboxTokens,
 };
